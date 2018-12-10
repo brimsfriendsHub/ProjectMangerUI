@@ -1,0 +1,18 @@
+<div color="primary">
+  <mat-toolbar color="primary" style="width:100%">
+    <mat-toolbar-row style="width:100%">
+      <span class="menu-spacer"></span>
+      <div class="menu-spacer">
+        <a class="navbar-brand" href="#">Project Manager</a>
+        <a class="nav-link"  [routerLink]="'/projects/0'" mat-button>Add Project</a>
+        <a class="nav-link" [routerLink]="'/tasks/0'"  mat-button>Add Task</a>
+        <a class="nav-link" [routerLink]="'/users/0'" mat-button>Add User</a>
+        <a class="nav-link" [routerLink]="'/view-tasks'" mat-button>View Task</a>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
+<div class="container">
+  <router-outlet>
+  </router-outlet>
+</div>

@@ -1,0 +1,18 @@
+.example-card {
+    max-width: flex;
+  }
+  
+  .example-header-image {
+        background-size: cover;
+  }
+  table {
+    width: 100%;
+    border: 2px;
+  }
+  
+  th.mat-sort-header-sorted {
+    color: black;
+  }
+  mat-row:nth-child(even){
+    background-color:red;
+    }

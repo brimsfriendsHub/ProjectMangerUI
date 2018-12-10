@@ -1,0 +1,454 @@
+<mat-card class="example-card">
+        <mat-card-header>
+               
+                <mat-card-title><mat-icon >assignment_turned_in</mat-icon>{{pageTitle}}</mat-card-title>
+        </mat-card-header>
+<div class="{{alertType}}" *ngIf="showAlert">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+    {{pageMessage}}
+</div>
+
+<form class="form-group" [formGroup]="taskForm">
+       
+    <div class="form-group row">
+        <label for="project" class="col-sm-2 col-form-label" i18n="@@Project"> Project Name <span class="mandatory">*</span></label>
+        <div class="col-sm-7">
+            <div class="input-group">
+                <input type="hidden" name="projectId" id="projectId" formControlName="projectId">
+                <input type="text" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.projectName.errors }" name="projectName"
+                    formControlName="projectName" readonly id="projectName">
+
+                    <button mat-mini-fab [disabled]="isEditMode" (click)="openModal('project-modal')" matTooltip="Click to select Project from list" >
+                            <mat-icon aria-label=""  ([disabled])="isEditMode" >search</mat-icon>
+                          </button>
+                
+
+                <div *ngIf="submitted && f.projectName.errors" class="invalid-feedback">
+                    <div *ngIf="f.projectName.errors.required" i18n="@@ProjectNameRequired">Project Name is required</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <input type="hidden" name="taskId" id="taskId" formControlName="taskId">
+        <label for="taskName" class="col-sm-2 col-form-label"> <span i18n="@@Task">Task Details</span> <span class="mandatory">*</span> </label>
+        <div class="col-sm-7">
+
+            <input type="text" class="form-control" id="taskName" formControlName="taskName" maxlength="50" name="taskName" placeholder="Task Name"
+                [ngClass]="{ 'is-invalid': submitted && f.taskName.errors }">
+
+            <div *ngIf="submitted && f.taskName.errors" class="invalid-feedback">
+                <div *ngIf="f.taskName.errors.required" i18n="@@TaskNameRequired">Task Name is required</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="parentTask" (change)="onParentTaskSelected($event)">
+                <label class="form-check-label" for="gridCheck1" i18n="@@ParentTask"> Parent Task</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="priority" class="col-sm-2 col-form-label" i18n="@@Priority">Priority</label>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <span class="inline">0</span>
+                <input type="range" class="form-control" id="priority" formControlName="priority" name="priority" min="0" max="100" value="0"
+                    (change)="onPriorityChange($event)" step="1">&nbsp; &nbsp; <span class="inline">{{priority}}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label for="parentTask" class="col-sm-2 col-form-label" i18n="@@ParentTask">Parent Task</label>
+        <div class="col-sm-7">
+            <div class="input-group">
+                <input type="hidden" name="parentTaskId" id="parentTaskId" formControlName="parentTaskId">
+
+                <input type="text" name="parentTaskName" readonly formControlName="parentTaskName" id="parentTaskName" class="form-control">
+                <button mat-mini-fab>
+                        <mat-icon aria-label="" (click)="openModal('parent-task-modal')" matTooltip="Click to select Parent Task from list" >search</mat-icon>
+                      </button>
+    
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label for="startDate" class="col-sm-2 col-form-label" i18n="@@StartDate">Start Date</label>
+
+        <div class="col-sm-3">
+            <input type="date" class="form-control" formControlName="startDate" name="startDate" />
+        </div>
+
+        <div class="col-sm-2"><label class="form-check-label" for="endDate" i18n="@@EndDate">End date</label>
+        </div>
+        <div class="col-sm-3">
+                <input type="date" class="form-control" formControlName="endDate" name="endDate" />
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label for="managerName" class="col-sm-2 col-form-label" i18n="@@User">User </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="managerId" id="managerId" formControlName="managerId">
+                <input type="text" name="managerName" id="managerName" readonly formControlName="managerName" class="form-control">
+              
+            <button mat-mini-fab>
+                    <mat-icon aria-label="" (click)="openModal('manager-modal')" matTooltip="Click to select User from list" >search</mat-icon>
+                  </button>
+              
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-2">
+                <button mat-raised-button color="primary" (click)="onSubmit()"  matTooltip="Click to Save the Task Details" >{{addButtonTitle}}</button>
+            
+        </div>
+        <div class="col-sm-2">
+                <button mat-raised-button color="warn" (click)="resetForm()"  matTooltip="Click to Reset the Task Details" >Reset</button>
+            
+        </div>
+    </div>
+
+</form>
+</mat-card>
+<!-- Project Modal  -->
+<modal id="project-modal">
+    <div class="modal-container">
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <h3 i18n="@@BrowseProjects">Browse - Projects</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- <div class="col col-md-1" i18n="@@Search">Search</div> -->
+                    <div class="col col-md-12">
+                            <mat-form-field class="col-sm-12">
+                                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search By Project Name only">
+                                  </mat-form-field>
+                        <!-- <input type="text" id="searchProject" name="searchProject" class="form-control" [(ngModel)]="searchProject" /> -->
+                    </div>
+                </div>
+                <br/>
+
+                <!-- <div class="row">
+                    <div class="col col-md-2"><strong><span i18n="@@FieldProjectId">Project Id</span></strong></div>
+                    <div class="col col-md-6"><strong><span i18n="@@FieldProject">Project</span></strong></div>
+                    <div class="col col-md-2"><strong><span i18n="@@FieldPriority">Priority</span></strong></div>
+                    <div class="col col-md-2"><strong><span i18n="@@FieldAction">Action</span></strong></div>
+                </div> -->
+
+                <ul class="list-group">
+
+                        <table mat-table [dataSource]="projectsdataSource"  class="mat-elevation-z8" >
+    
+ 
+                                <div class="row">
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="ProjectId">
+                                  <th mat-header-cell *matHeaderCellDef > ProjectId </th>
+                                  <td mat-cell *matCellDef="let task"> {{ task.ProjectId}} </td>
+                                </ng-container>
+                              </div>
+                          
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="ProjectName">
+                                  <th mat-header-cell *matHeaderCellDef > Project Name </th>
+                                  <td mat-cell *matCellDef="let task"> {{task.ProjectName}} </td>
+                                </ng-container>
+                              </div>
+                              <div class="col col-md-3">
+                                <ng-container matColumnDef="Priority">
+                                  <th mat-header-cell *matHeaderCellDef > Priority </th>
+                                  <td mat-cell *matCellDef="let task"> {{task.Priority}} 
+                                  <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  <button mat-raised-button color="accent" (click)="setSelectedProject(task); closeModal('project-modal');"  matTooltip="Click to select any one Task" >Select</button> -->
+                                </td>
+                                </ng-container>
+                                </div>
+                                <div class="col col-md-3">
+                                        <ng-container matColumnDef="actions">
+                                              <th mat-header-cell *matHeaderCellDef > Actions </th>
+                                              <td mat-cell *matCellDef="let task">
+                                                    <button mat-raised-button color="accent" (click)="setSelectedProject(task); closeModal('project-modal');"  matTooltip="Click to select any Project from the list" >Select</button>
+                                             </td>
+                                            </ng-container>
+                                            </div>
+                            </div>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsProject"></tr>
+                                <div class="row">
+                                <tr mat-row *matRowDef="let row; columns: displayedColumnsProject;">
+                                   
+                                </tr>
+                                </div>
+                            </table>
+                            <!-- <div *ngIf="projectsdataSource.length === 0">No data</div> -->
+                            <div class="mat-elevation-z8" >
+                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                                </div>
+                    <!-- <li *ngFor="let project of projects | FilterPipe: searchProject" class="list-group-item">
+                        <div class="row">
+                            <div class="col col-md-2">{{ project.ProjectId }}</div>
+                            <div class="col col-md-6">{{ project.ProjectName }}</div>
+                            <div class="col col-md-2">{{ project.Priority }}</div>
+                            <div class="col col-md-2">
+                                    <button mat-raised-button color="accent" (click)="setSelectedProject(project); closeModal('project-modal');"  matTooltip="Click to select any one Task" >Select</button>
+                                
+                            </div>
+                        </div>
+                    </li>
+
+                    <li *ngIf="(projects | FilterPipe: searchProject).length == 0" class="list-group-item">
+                        <div class="alert alert-info" role="alert" i18n="@@ThereAreNoItems">
+                            There are no items to display.
+                        </div>
+                    </li> -->
+
+                </ul>
+                <br />
+
+                <div class="row">
+                    <div class="col-md-offset-10 col-md-2">
+                            <button mat-raised-button color="primary" (click)="closeModal('project-modal');"  matTooltip="Click to close the Dialog" >Close</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-background"></div>
+</modal>
+
+
+<modal id="manager-modal">
+    <div class="modal-container">
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <h3 i18n="@@BrowseUser">Browse - User</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- <div class="col col-md-1" i18n="@@Search">Search</div> -->
+                    <div class="col col-md-11">
+                            <mat-form-field class="col-sm-12">
+                                    <input matInput (keyup)="applyFilterforUser($event.target.value)" placeholder="Search By First Name or Last Name only">
+                                  </mat-form-field>
+                        <!-- <input type="text" id="searchManager" name="searchManager" class="form-control" [(ngModel)]="searchManager" />-->
+                        </div> 
+                </div>
+                <br/>
+
+                <!-- <div class="row">
+                    <div class="col col-md-2"><strong i18n="@@FieldId">Id</strong></div>
+                    <div class="col col-md-4"><strong i18n="@@FieldFirstName">First Name</strong></div>
+                    <div class="col col-md-4"><strong i18n="@@FieldLastName">Last Name</strong></div>
+                    <div class="col col-md-2"><strong i18n="@@Action">Action</strong></div>
+                </div> -->
+
+                <ul class="list-group">
+                        <table mat-table [dataSource]="ManagersDataSource"  class="mat-elevation-z8" >
+    
+ 
+                                <div class="row">
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="UserId">
+                                  <th mat-header-cell *matHeaderCellDef > User Id </th>
+                                  <td mat-cell *matCellDef="let User"> {{ User.UserId}} </td>
+                                </ng-container>
+                              </div>
+                          
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="FirstName">
+                                  <th mat-header-cell *matHeaderCellDef > First Name </th>
+                                  <td mat-cell *matCellDef="let User"> {{ User.FirstName }} </td>
+                                </ng-container>
+                              </div>
+                              <div class="col col-md-3">
+                                <ng-container matColumnDef="LastName">
+                                  <th mat-header-cell *matHeaderCellDef > Last Name </th>
+                                  <td mat-cell *matCellDef="let User"> {{ User.LastName }} 
+                                  <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  <button mat-raised-button color="accent" (click)="setSelectedManager(User); closeModal('manager-modal');"  matTooltip="Click to select any User" >Select</button> -->
+                                </td>
+                                </ng-container>
+                                </div>
+                                <div class="col col-md-3">
+                                        <ng-container matColumnDef="actions">
+                                              <th mat-header-cell *matHeaderCellDef > Actions </th>
+                                              <td mat-cell *matCellDef="let User">
+                                                    <button mat-raised-button color="accent" (click)="setSelectedManager(User); closeModal('manager-modal');"  matTooltip="Click to select any User" >Select</button>
+                                             </td>
+                                            </ng-container>
+                                            </div>
+                            </div>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsUser"></tr>
+                                <div class="row">
+                                <tr mat-row *matRowDef="let row; columns: displayedColumnsUser;">
+                                   
+                                </tr>
+                                </div>
+                            </table>
+                            <!-- <div *ngIf="projectsdataSource.length === 0">No data</div> -->
+                            <div class="mat-elevation-z8" >
+                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                                </div>
+                    <!-- <li *ngFor="let manager of managers | FilterPipe: searchManager" class="list-group-item">
+                        <div class="row">
+                            <div class="col col-md-2">{{ manager.UserId }}</div>
+                            <div class="col col-md-4">{{ manager.FirstName }}</div>
+                            <div class="col col-md-4">{{ manager.LastName }}</div>
+                            <div class="col col-md-2">
+                                    <button mat-raised-button color="accent" (click)="setSelectedManager(manager);closeModal('manager-modal');"  matTooltip="Click to select any one Task" >Select</button>
+                                
+                            </div>
+                        </div>
+                    </li>
+
+                    <li *ngIf="(managers | FilterPipe: searchManager).length == 0" class="list-group-item">
+                        <div class="alert alert-info" role="alert" i18n="@@ThereAreNoItems">
+                            There are no items to display.
+                        </div>
+                    </li> -->
+                </ul>
+                <br />
+                <div class="row">
+                    <div class="col-md-offset-10 col-md-2">
+                            <button mat-raised-button color="primary" (click)="closeModal('manager-modal');"  matTooltip="Click to close the Dialog" >Close</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-background"></div>
+</modal>
+
+
+
+<modal id="parent-task-modal">
+    <div class="modal-container">
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <h3 i18n="@@BrowseParentTask">Browse - Parent Task</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                        <mat-form-field class="col-sm-12">
+                                <input matInput (keyup)="applyFilterforTask($event.target.value)" placeholder="Search By Task Name only">
+                              </mat-form-field>
+                    <!-- <div class="col col-md-1" i18n="@@Search">Search</div> -->
+                    <!-- <div class="col col-md-11">
+                        <input type="text" id="searchParentTask" name="searchParentTask" class="form-control" [(ngModel)]="searchParentTask" />-->
+                    </div>
+            <!-- </div>  -->
+                <br/>
+
+                <!-- <div class="row">
+                    <div class="col col-md-2"><strong i18n="@@FieldId">Id</strong></div>
+                    <div class="col col-md-8"><strong i18n="@@FieldParentTask">Parent Task</strong></div>
+                    <div class="col col-md-2"><strong i18n="@@FieldAction">Action</strong></div>
+                </div> -->
+
+                <ul class="list-group">
+                        <table mat-table [dataSource]="ParentTasksDataSource"  class="mat-elevation-z8" >
+    
+ 
+                                <div class="row">
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="ParentTaskId">
+                                  <th mat-header-cell *matHeaderCellDef > Id </th>
+                                  <td mat-cell *matCellDef="let PTask"> {{ PTask.ParentTaskId}} </td>
+                                </ng-container>
+                              </div>
+                             
+                                <div class="col col-md-3">
+                                <ng-container matColumnDef="ParentTaskName">
+                                  <th mat-header-cell *matHeaderCellDef > Parent Task Name </th>
+                                  <td mat-cell *matCellDef="let PTask"> {{ PTask.ParentTaskName }} 
+                                        <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button mat-raised-button color="accent" (click)="setSelectedParentTask(PTask);closeModal('parent-task-modal');"   matTooltip="Click to select any User" >Select</button> -->
+                                  </td>
+                                </ng-container>
+
+                              </div>
+                              <div class="col col-md-3">
+                              <ng-container matColumnDef="actions">
+                                    <th mat-header-cell *matHeaderCellDef > Actions </th>
+                                    <td mat-cell *matCellDef="let PTask">
+                                            <button mat-raised-button color="accent" (click)="setSelectedParentTask(PTask);closeModal('parent-task-modal');"   matTooltip="Click to select any User" >Select</button>
+                                   </td>
+                                  </ng-container>
+                                  </div>
+                                <!-- <div class="col col-md-3">
+                                        <ng-container matColumnDef="">
+                                          <th mat-header-cell *matHeaderCellDef > Actions </th>
+                                          <td mat-cell *matCellDef="let User"> </td>
+                                        </ng-container>
+                                    </div> -->
+                            </div>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsTask"></tr>
+                                <div class="row">
+                                <tr mat-row *matRowDef="let row; columns: displayedColumnsTask;">
+                                   
+                                </tr>
+                                </div>
+                            </table>
+
+                            <div class="mat-elevation-z8" >
+                                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                            </div>
+                    <!-- <li *ngFor="let parentTask of parentTasks | FilterPipe: searchParentTask" class="list-group-item">
+                        <div class="row">
+                            <div class="col col-md-2">{{ parentTask.ParentTaskId }}</div>
+                            <div class="col col-md-8">{{ parentTask.ParentTaskName }}</div>
+                            <div class="col col-md-2">
+                         <button mat-raised-button color="accent" (click)="setSelectedParentTask(parentTask);closeModal('parent-task-modal');"  matTooltip="Click to select any one Task" >Select</button>
+                             
+                            </div>
+                        </div>
+                    </li>
+
+                    <li *ngIf="(parentTasks | FilterPipe: searchParentTask).length == 0" class="list-group-item">
+                        <div class="alert alert-info" role="alert" i18n="@@ThereAreNoItems">
+                            There are no items to display.
+                        </div>
+                    </li> -->
+                </ul>
+                <br />
+                <div class="row">
+                    <div class="col-md-offset-10 col-md-2">
+                            <button mat-raised-button color="primary" (click)="closeModal('parent-task-modal');"  matTooltip="Click to close the Dialog" >Close</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-background"></div>
+</modal>

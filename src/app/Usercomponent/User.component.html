@@ -1,0 +1,79 @@
+<mat-accordion class="example-headers-align">
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle >
+        <mat-expansion-panel-header>
+            <mat-panel-title color="primary">
+                <mat-icon>account_circle</mat-icon> Add User Details
+            </mat-panel-title>
+            </mat-expansion-panel-header>
+<div class="{{alertType}}" *ngIf="showAlert" >
+    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+    {{pageMessage}}
+</div>
+
+<form class="form-group" [formGroup]="userForm"  #formDirective="ngForm" >
+  <input type="hidden" id="userId" formControlName="userId" value="">
+<mat-card >
+  <div class="form-group row">
+      <mat-form-field class="col-sm-12">
+          <input matInput   id="firstName" maxlength="50"
+          formControlName="firstName" name="firstName" placeholder="First Name" required>
+          <mat-error>{{getErrorMessageforFirstName()}}</mat-error>
+        </mat-form-field>
+   
+    
+  </div>
+
+  <div class="form-group row">
+      <mat-form-field class="col-sm-12">
+          <input matInput  
+          id="lastName" maxlength="50"
+          formControlName="lastName"
+          name="lastName" required
+          placeholder="Last Name">
+          <mat-error>{{getErrorMessageforLastName()}}</mat-error>
+        </mat-form-field>
+   
+  </div>
+
+  <div class="form-group row">
+      <mat-form-field class="col-sm-12">
+          <input matInput   type="number" id="employeeId"
+          formControlName="employeeId" placeholder="Employee Id" required>
+          <mat-error>{{getErrorMessageforEmpNo()}}</mat-error>
+        </mat-form-field>
+     
+   
+  </div>
+
+  <div class="form-group row">
+
+    <div class="col-sm-2">
+        <button mat-raised-button color="primary" (click)="onSubmit(formDirective)"  matTooltip="Click to Save the User Details" >{{addButtonTitle}}</button>
+      
+    </div>
+    <div class="col-sm-2">
+        <button mat-raised-button color="primary" type="reset" (click)="clearForm()" matTooltip="clear the control values" >Reset</button>
+      
+    </div>
+  </div>
+</mat-card>
+
+  
+
+</form>
+</mat-expansion-panel>
+</mat-accordion>
+
+      
+      <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+          <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <mat-icon >user_groupcircle</mat-icon> User Details
+              </mat-panel-title>
+              
+              </mat-expansion-panel-header>
+    <mat-card>
+    
+    <app-user-list></app-user-list>
+    </mat-card>
+    </mat-expansion-panel>

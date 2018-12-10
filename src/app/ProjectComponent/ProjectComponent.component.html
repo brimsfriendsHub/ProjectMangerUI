@@ -1,0 +1,205 @@
+<modal id="custom-modal-1">
+
+  <div class="modal-container">
+    <div class="modal-body">
+
+      <div class="container">
+
+        <div class="row">
+          <div>
+            <h3 i18n="@@BrowserManager">Browse - Manager</h3>
+          </div>
+        </div>
+
+        <div class="row">
+         
+          <div class="col col-md-12">
+              <mat-form-field class="col-sm-12">
+                  <input matInput (keyup)="applyFilterforusers($event.target.value)" placeholder="Search By First Name or Last Name only">
+                </mat-form-field>
+            
+          </div>
+        </div>
+        <br/>
+
+ 
+
+        <ul class="list-group">
+            <table mat-table [dataSource]="ManagersDataSource"  class="mat-elevation-z8" >
+    
+ 
+                <div class="row">
+                <div class="col col-md-3">
+                <ng-container matColumnDef="UserId">
+                  <th mat-header-cell *matHeaderCellDef > User Id </th>
+                  <td mat-cell *matCellDef="let User"> {{ User.UserId}} </td>
+                </ng-container>
+              </div>
+          
+                <div class="col col-md-3">
+                <ng-container matColumnDef="FirstName">
+                  <th mat-header-cell *matHeaderCellDef > First Name </th>
+                  <td mat-cell *matCellDef="let User"> {{ User.FirstName }} </td>
+                </ng-container>
+              </div>
+              <div class="col col-md-3">
+                <ng-container matColumnDef="LastName">
+                  <th mat-header-cell *matHeaderCellDef > Last Name </th>
+                  <td mat-cell *matCellDef="let User"> {{ User.LastName }} 
+                
+                </td>
+                </ng-container>
+                </div>
+                <div class="col col-md-3">
+                        <ng-container matColumnDef="actions">
+                              <th mat-header-cell *matHeaderCellDef > Actions </th>
+                              <td mat-cell *matCellDef="let User">
+                                    <button mat-raised-button color="accent" (click)="setSelectedManager(User); closeModal('custom-modal-1');"  matTooltip="Click to select any User" >Select</button>
+                             </td>
+                            </ng-container>
+                            </div>
+            </div>
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsUser"></tr>
+                <div class="row">
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsUser;">
+                   
+                </tr>
+                </div>
+            </table>
+              <div class="mat-elevation-z8" >
+                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                                </div>
+       
+        </ul>
+        <br />
+        <div class="row">
+          <div class="col-md-offset-10 col-md-2">
+            <button mat-raised-button color="warn" (click)="closeModal('custom-modal-1');"  i18n="@@Close">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-background"></div>
+</modal>
+
+<!-- <div class="page-header">
+  <h3>
+    {{pageTitle}}
+  </h3>
+</div> -->
+
+
+<mat-accordion class="example-headers-align">
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle >
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>project_circle</mat-icon> Add Project Details
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="{{alertType}}" *ngIf="showAlert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+              {{pageMessage}}
+            </div>
+<form class="form-group" [formGroup]="projectForm" novalidate>
+  <input type="hidden" id="" formControlName="projectId" value="">
+  <mat-card >
+  <div class="form-group row">
+     
+    <label for="projectName" class="col-sm-2 col-form-label" ><span i18n="@@Project"> Project</span> <span class="mandatory">*</span></label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" formControlName="projectName" [ngClass]="{ 'is-invalid': submitted && f.projectName.errors }"
+        required id="projectName" maxlength="50" name="projectName" placeholder="Project Name">
+
+      <div *ngIf="submitted && f.projectName.errors" class="invalid-feedback">
+        <div *ngIf="f.projectName.errors.required" i18n="@@ProjectNameRequired">Project Name is required</div>
+      </div>
+    </div> 
+  </div>
+
+  <div class="form-group row">
+    
+    <div class="col-sm-3">
+      <div class="form-check">
+        <span class="mandatory">*</span>
+    
+         <input class="form-check-input" type="checkbox" formControlName="setStartAndEndDate" (change)="changeDate($event)" id="chkSetStartAndEndDate"
+          name="chkSetStartAndEndDate">
+        <label class="form-check-label" for="gridCheck1" i18n="@@CheckStartAndEndState"> Set Start Date And End Date</label> 
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+        
+      <input type="date" class="form-control" formControlName="startDate" id="startDate" name="startDate" />
+    </div>
+
+    <div class="col-sm-3">
+        
+      <input type="date" class="form-control"  formControlName="endDate" id="endDate" name="endDate" /> 
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="priority" class="col-sm-2 col-form-label" i18n="@@Priority">Priority</label>
+    <div class="col-sm-4">
+      <div class="input-group">
+        <span class="inline">0</span>
+        <input type="range" class="form-control" id="priority" formControlName="priority" name="priority" min="0" max="100" value="0"
+          (change)="onPriorityChange($event)" step="1">&nbsp; &nbsp; <span class="inline">{{priority}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="manager" class="col-sm-2 col-form-label"> <span i18n="@@Manager">Manager </span><span class="mandatory">*</span></label>
+    <div class="col-sm-4">
+      <div class="input-group">
+        <input type="text" class="form-control" readonly formControlName="manager" required name="manager" [ngClass]="{ 'is-invalid': submitted && f.manager.errors }"
+          id="manager">
+
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" (click)="openModal('custom-modal-1')" i18n="@@Search" >Search</button>
+        </span>
+
+        <input type="hidden" id="userId" name="userId" formControlName="userId">
+
+        <div *ngIf="submitted && f.manager.errors" class="invalid-feedback">
+          <div *ngIf="f.manager.errors.required" i18n="@@ManagerRequired">Manager name is required</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-2">
+        <button mat-raised-button color="primary" (click)="onSubmit()" matTooltip="Click to Save the Project Details" >{{addButtonTitle}}</button>
+      
+    </div>
+
+    <div class="col-sm-2">
+        <button mat-raised-button color="primary" (click)="resetForm()" matTooltip="Clear the Control Values" >Reset</button>
+      
+    </div>
+  </div>
+
+  
+</mat-card>
+</form>
+</mat-expansion-panel>
+</mat-accordion>
+
+<br/>
+<mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <mat-icon >user_groupcircle</mat-icon> Project List
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+<mat-card>
+<app-project-list-component></app-project-list-component>
+</mat-card>
+</mat-expansion-panel>
