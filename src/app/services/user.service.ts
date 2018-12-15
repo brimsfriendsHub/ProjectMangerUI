@@ -1,14 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { UserModel } from '../models/User';
 import { AppSettings } from '../models/AppSettings';
+import {RequestOptions,  URLSearchParams, RequestMethod,  ResponseContentType, Headers} from '@angular/http';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class UserService {
-
+  requestOption = {
+    headers: new HttpHeaders({
+      'Content-Type':  'application/json',
+      'Authorization': 'my-auth-token'
+    })
+  };
   constructor(private httpClient: HttpClient) { }
 
   getUsers() {
@@ -22,12 +28,11 @@ export class UserService {
   delete(id: number) {
     const deleteUrl = AppSettings.UsersBaseUrl + '/delete/' + id;
     console.log(deleteUrl);
-    return this.httpClient.post<any>(deleteUrl, {});
+    return this.httpClient.post<any>(deleteUrl, {}, this.requestOption);
   }
 
   createOrUpdateUser(user) {
-    
     console.log(user);
-    return this.httpClient.post(AppSettings.UsersBaseUrl, user);
+    return this.httpClient.post(AppSettings.UsersBaseUrl, user, this.requestOption);
   }
 }

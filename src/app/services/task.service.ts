@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { TaskModel } from '../models/Task';
 import { AppSettings } from '../models/AppSettings';
+import {RequestOptions,  URLSearchParams, RequestMethod,  ResponseContentType, Headers} from '@angular/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +10,20 @@ import { AppSettings } from '../models/AppSettings';
 
 export class TaskService {
 
+  requestOption = {
+    headers: new HttpHeaders({
+      'Content-Type':  'application/json',
+      'Authorization': 'my-auth-token'
+    })
+  };
   constructor(private httpClient: HttpClient) { }
 
   createOrUpdateTask(task: TaskModel) {
-    return this.httpClient.post(AppSettings.TasksUrl, task);
+    return this.httpClient.post(AppSettings.TasksUrl, task, this.requestOption);
   }
 
   completeTask(task: TaskModel) {
-    return this.httpClient.post(AppSettings.TasksUrl + '/complete', task);
+    return this.httpClient.post(AppSettings.TasksUrl + '/complete', task, this.requestOption);
   }
 
   getAllParentTasks() {

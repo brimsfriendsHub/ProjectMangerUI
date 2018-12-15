@@ -268,8 +268,15 @@ this.projectsdataSource.paginator=this.paginator.toArray()[0];
     const sd = Date.parse(this.taskForm.value.startDate);
     const ed = Date.parse(this.taskForm.value.endDate);
 
+    const CurrentDate = new Date();
+    CurrentDate.setHours(0, 0, 0, 0);
+debugger;
     if (ed <= sd) {
       this.displayPageMessage(AppSettings.AlertDanger, 'End date should be greater than start date');
+      return;
+    // tslint:disable-next-line:max-line-length
+    } else if (this.taskForm.value.startDate < CurrentDate || this.taskForm.value.endDate < CurrentDate || this.taskForm.value.endDate == "") {
+      this.displayPageMessage(AppSettings.AlertDanger, 'Please Enter Valid Date');
       return;
     }
 
@@ -279,8 +286,7 @@ this.projectsdataSource.paginator=this.paginator.toArray()[0];
 
     this._taskService.createOrUpdateTask(this.taskForm.value)
       .subscribe((data) => {
-        this.openSnackBar("Task  has been successfully added/updated", this.taskForm.value.projectName);
-     
+        this.openSnackBar('Task  has been successfully added/updated', this.taskForm.value.projectName);
       },
         (exception) => {
 

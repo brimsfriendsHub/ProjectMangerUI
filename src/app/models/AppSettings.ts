@@ -1,5 +1,5 @@
 export class AppSettings {
-    public static ServiceBaseUrl = 'http://localhost/ProjectManagementServices/Api';
+    public static ServiceBaseUrl = 'http://localhost:3758/Api';
     public static UsersBaseUrl = AppSettings.ServiceBaseUrl + '/UserDetail';
     public static ProjectsUrl = AppSettings.ServiceBaseUrl + '/ProjectDetail';
     public static TasksUrl = AppSettings.ServiceBaseUrl + '/TaskDetail';

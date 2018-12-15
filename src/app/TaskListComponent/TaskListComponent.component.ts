@@ -106,7 +106,8 @@ export class TaskListComponent implements OnInit {
     }
 
     this._taskService.completeTask(task).subscribe((data: Array<TaskModel>) => {
-      this.tasks = data;
+      this.dataSource = new MatTableDataSource(data);
+      //this.tasks = data;
     });
   }
   private getTime(date?: Date) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input,ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -10,6 +10,7 @@ import { UserModel } from '../models/User';
 import { AppSettings } from '../models/AppSettings';
 import { LoggingService } from '../services/logging.service';
 import {MatSnackBar} from '@angular/material';
+import { ProjectListComponent } from '../ProjectListComponent/ProjectList.component';
 @Component({
   selector: 'app-create-project-component',
   templateUrl: './ProjectComponent.component.html',
@@ -28,6 +29,7 @@ export class ProjectComponent implements OnInit {
   managers: Array<UserModel> = [];
   searchManager: string;
   @Input() project: ProjectModel;
+  @ViewChild(ProjectListComponent) plComp : ProjectListComponent;
 
   addButtonTitle = 'Add';
   pageTitle = 'Add Project';
@@ -35,8 +37,8 @@ export class ProjectComponent implements OnInit {
   allowDateSelection: boolean;
   showAlert: boolean;
   alertType: string;
-  displayedColumnsUser:string[]=['UserId','FirstName','LastName','actions'];
-  ManagersDataSource:MatTableDataSource<UserModel>;
+  displayedColumnsUser: string[] = ['UserId', 'FirstName', 'LastName', 'actions'];
+  ManagersDataSource: MatTableDataSource<UserModel>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor(private _formBuilder: FormBuilder,
     private _projectService: ProjectService,
@@ -117,6 +119,8 @@ export class ProjectComponent implements OnInit {
     this.addButtonTitle = 'Add';
     this.priority = 0;
     this.projectForm.controls['priority'].setValue(this.priority);
+    this.allowDateSelection = true;
+    this.changeDateControlState();
   }
 
   get f() { return this.projectForm.controls; }
@@ -133,7 +137,9 @@ export class ProjectComponent implements OnInit {
       const today = new Date();
       const endDate = new Date();
       endDate.setDate(today.getDate() + 1);
+      if ( this.projectId === 0) {
       this.setStartAndEndDate(today, endDate);
+      }
     } else {
       this.projectForm.controls[AppSettings.StartDateFieldName].disable();
       this.projectForm.controls[AppSettings.EndDateFieldName].disable();
@@ -160,13 +166,11 @@ export class ProjectComponent implements OnInit {
   }
 
   getByProjectId(id) {
-    if(id===0)
-    {
-this.projectForm.reset();
-    }
-    else
-    {
+    if ( id === 0) {
+      this.projectForm.reset();
+    } else {
     this._projectService.getById(id).subscribe((p) => {
+      this.allowDateSelection = false;
       this.addButtonTitle = 'Update';
       this.pageTitle = 'Manage Project - ' + p.ProjectName;
       this.project = p;
@@ -197,8 +201,8 @@ this.projectForm.reset();
     });
     this.resetForm();
   }
+  // tslint:disable-next-line:member-ordering
   step = 0;
-
   setStep(index: number) {
     this.step = index;
   }
@@ -209,15 +213,12 @@ this.projectForm.reset();
 
     const sd = Date.parse(this.projectForm.value.startDate);
     const ed = Date.parse(this.projectForm.value.endDate);
-if(this.allowDateSelection)
-{
+   if (this.allowDateSelection || this.allowDateSelection === undefined) {
     if (ed <= sd || (isNaN(sd) || isNaN(ed))) {
       this.displayPageMessage(AppSettings.AlertDanger, 'End date should be greater than start date or date fields are empty');
       return;
     }
-  }
-  else
-  {
+  } else {
     // this.projectForm.value.startDate=null;
     // this.projectForm.value.enDate=null;
   }
@@ -228,12 +229,11 @@ if(this.allowDateSelection)
 
     this._projectService.createOrUpdateProject(this.projectForm.value)
       .subscribe((data) => {
-        this.openSnackBar("User has been successfully added/updated", this.projectForm.value.projectName);
+        this.openSnackBar('User has been successfully added/updated', this.projectForm.value.projectName);
        // this.displayPageMessage(AppSettings.AlertSuccess, 'Project details has been successfully saved/updated.');
-      //  this.resetForm();
-       
+        this.plComp.getAllProjects();
+        this.resetForm();
         this._router.navigate(['/projects/0?r=' +  + Math.floor(Math.random() * 1000)]);
-  
       },
         (erorr) => {
           this._loggingService.LogError(erorr);
