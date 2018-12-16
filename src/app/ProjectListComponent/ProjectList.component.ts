@@ -38,7 +38,7 @@ export class ProjectListComponent implements OnInit {
     alert('No action defined in requiremet document.');
   }
 
-  private getTime(date?: Date) {
+  getTime(date?: Date) {
     return date != null ? new Date(date).getTime() : 0;
   }
 

@@ -110,7 +110,7 @@ export class TaskListComponent implements OnInit {
       //this.tasks = data;
     });
   }
-  private getTime(date?: Date) {
+  getTime(date?: Date) {
     return date != null ? new Date(date).getTime() : 0;
   }
 

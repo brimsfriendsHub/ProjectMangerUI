@@ -138,8 +138,6 @@ this.projectsdataSource.paginator=this.paginator.toArray()[0];
       this.projects = data;
       this.projectsdataSource = new MatTableDataSource(this.projects);
       this.projectsdataSource.paginator=this.paginator.toArray()[0];
-
-    
     });
 
     this._taskService.getAllParentTasks().subscribe((data: Array<TaskModel>) => {
@@ -270,7 +268,6 @@ this.projectsdataSource.paginator=this.paginator.toArray()[0];
 
     const CurrentDate = new Date();
     CurrentDate.setHours(0, 0, 0, 0);
-debugger;
     if (ed <= sd) {
       this.displayPageMessage(AppSettings.AlertDanger, 'End date should be greater than start date');
       return;
